@@ -19,17 +19,6 @@
       <!-- Register Form -->
       <form @submit.prevent="handleRegister" class="space-y-5">
         <div>
-          <label class="block text-sm text-burme-light/60 mb-2">Username</label>
-          <input 
-            v-model="form.username"
-            type="text" 
-            required
-            minlength="3"
-            class="w-full px-4 py-3 rounded-xl"
-            placeholder="Choose a username"
-          />
-        </div>
-        <div>
           <label class="block text-sm text-burme-light/60 mb-2">Email</label>
           <input 
             v-model="form.email"
@@ -90,21 +79,16 @@
         <a href="#" class="text-burme-gold hover:underline">Privacy Policy</a>
       </p>
 
-      <!-- Divider -->
-      <div class="flex items-center gap-4 my-8">
-        <div class="flex-1 h-px bg-burme-gold/20"></div>
-        <span class="text-burme-light/40 text-sm">or</span>
-        <div class="flex-1 h-px bg-burme-gold/20"></div>
+      <!-- Login Link -->
+      <div class="mt-6 text-center">
+        <router-link to="/login" class="text-burme-light/60">
+          Already have an account? 
+          <span class="text-burme-gold hover:underline font-medium">Sign in</span>
+        </router-link>
       </div>
 
-      <!-- Login Link -->
-      <p class="text-center text-burme-light/60">
-        Already have an account?
-        <router-link to="/login" class="text-burme-gold hover:underline font-medium">Sign in</router-link>
-      </p>
-
       <!-- Back to Home -->
-      <div class="mt-6 text-center">
+      <div class="mt-4 text-center">
         <router-link to="/" class="text-burme-light/40 hover:text-burme-gold text-sm">
           <i class="bi bi-arrow-left mr-2"></i>
           Back to Home
@@ -124,7 +108,6 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const form = ref({
-  username: '',
   email: '',
   password: '',
   confirmPassword: ''
@@ -144,7 +127,6 @@ async function handleRegister() {
   }
 
   const success = await authStore.register(
-    form.value.username,
     form.value.email,
     form.value.password
   )

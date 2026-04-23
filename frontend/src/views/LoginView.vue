@@ -59,6 +59,14 @@
         </PremiumButton>
       </form>
 
+      <!-- Forgot Password -->
+      <div class="mt-4 text-center">
+        <router-link to="/reset-password" class="text-burme-gold hover:underline text-sm">
+          <i class="bi bi-key mr-2"></i>
+          Forgot Password?
+        </router-link>
+      </div>
+
       <!-- Back to Home -->
       <div class="mt-6 text-center">
         <router-link to="/" class="text-burme-light/40 hover:text-burme-gold text-sm">
