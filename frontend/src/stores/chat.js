@@ -28,7 +28,7 @@ export const useChatStore = defineStore('chat', () => {
     currentProvider.value = 'nvidia'
     
     try {
-      const response = await fetch(`${API_URL}/api/chat`, {
+      const response = await fetch(`${API_URL}/v1/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
