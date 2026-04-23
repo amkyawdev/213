@@ -27,13 +27,19 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Provider configuration - Cerebras Only
+# Provider configuration - NVIDIA + Cerebras
 AI_PROVIDERS = {
+    "nvidia": {
+        "url": "https://integrate.api.nvidia.ai/v1/chat/completions",
+        "api_key_env": "NVIDIA_API_KEY",
+        "model": "nvidia/llama-3.1-nemorus-70b-instruct",
+        "priority": 1
+    },
     "cerebras": {
         "url": "https://api.cerebras.cloud/v1/chat/completions",
         "api_key_env": "CEREBRAS_API_KEY",
         "model": "llama-3.3-70b",
-        "priority": 1
+        "priority": 2
     }
 }
 
@@ -284,7 +290,7 @@ class SmartProviderRouter:
     """Cerebras Provider Router - Single Provider"""
     
     def __init__(self):
-        self.provider = "cerebras"
+        self.provider = "nvidia"
     
     async def get_response_stream(
         self, 
