@@ -1,9 +1,6 @@
 {
   "buildCommand": "mkdir -p dist && cd frontend && npm install && npm run build && cp -r dist/* ../dist/ && rm -rf ../dist/sw.js ../dist/workbox*.js",
   "outputDirectory": "dist",
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
-  ],
   "headers": [
     {
       "source": "/(.*)",
