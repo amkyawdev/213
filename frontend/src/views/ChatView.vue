@@ -264,7 +264,7 @@ onMounted(() => {
 }
 
 .message-wrapper {
-  @apply animate-fade-in;
+  animation: fadeIn 0.5s ease forwards;
 }
 
 .user-message .chat-bubble {
@@ -273,5 +273,10 @@ onMounted(() => {
 
 .ai-message .chat-bubble {
   @apply rounded-2xl rounded-tl-sm;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 </style>
