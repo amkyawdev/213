@@ -13,6 +13,7 @@
           <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 rounded-xl flex items-center justify-center" :class="stat.bgClass">
               <i :class="[stat.icon, stat.iconClass]"></i>
+            </div>
             <span class="text-2xl font-bold" :class="stat.trend > 0 ? 'text-green-500' : 'text-red-500'">
               <i :class="stat.trend > 0 ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
               {{ Math.abs(stat.trend) }}%
@@ -178,19 +179,13 @@ const stats = ref([
 ])
 
 const providerStats = ref([
-  { name: 'Cerebras', percentage: 65 },
-  { name: 'Groq', percentage: 20 },
-  { name: 'OpenRouter', percentage: 10 },
-  { name: 'NVIDIA', percentage: 5 }
+  { name: 'Cerebras', percentage: 100 }
 ])
 
 const recentLogs = ref([])
 const users = ref([])
 const apiProviders = ref([
-  { name: 'Cerebras', status: 'online' },
-  { name: 'Groq', status: 'online' },
-  { name: 'OpenRouter', status: 'online' },
-  { name: 'NVIDIA', status: 'offline' }
+  { name: 'Cerebras', status: 'online' }
 ])
 
 function formatTime(timestamp) {
