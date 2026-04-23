@@ -67,6 +67,14 @@
         </router-link>
       </div>
 
+      <!-- Register Link -->
+      <div class="mt-6 text-center">
+        <router-link to="/register" class="text-burme-light/60">
+          Don't have an account? 
+          <span class="text-burme-gold hover:underline font-medium">Create one</span>
+        </router-link>
+      </div>
+
       <!-- Back to Home -->
       <div class="mt-6 text-center">
         <router-link to="/" class="text-burme-light/40 hover:text-burme-gold text-sm">
