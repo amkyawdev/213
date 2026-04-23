@@ -12,8 +12,7 @@
         <div v-for="stat in stats" :key="stat.label" class="stat-card glass-light rounded-2xl p-6 gold-border">
           <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 rounded-xl flex items-center justify-center" :class="stat.bgClass">
-              <i :class="stat.icon" :class="stat.iconClass"></i>
-            </div>
+              <i :class="[stat.icon, stat.iconClass]"></i>
             <span class="text-2xl font-bold" :class="stat.trend > 0 ? 'text-green-500' : 'text-red-500'">
               <i :class="stat.trend > 0 ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
               {{ Math.abs(stat.trend) }}%
