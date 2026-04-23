@@ -3,16 +3,16 @@
     <!-- Three.js Particle Canvas -->
     <canvas id="particle-canvas"></canvas>
     
-    <!-- Desktop Navigation -->
-    <DesktopNav class="desktop-nav" @toggle="toggleNav" :collapsed="navCollapsed" />
+    <!-- Desktop Navigation (Hidden on Mobile) -->
+    <DesktopNav class="desktop-nav hidden md:block" @toggle="toggleNav" :collapsed="navCollapsed" />
     
-    <!-- Mobile Bottom Dock -->
-    <MobileDock class="mobile-dock fixed bottom-0 left-0 right-0 z-50" />
+    <!-- Mobile Bottom Dock (Hidden on Desktop) -->
+    <MobileDock class="mobile-dock fixed bottom-0 left-0 right-0 z-50 md:hidden" />
     
-    <!-- Main Content -->
+    <!-- Main Content (Full width on mobile, sidebar margin on desktop) -->
     <main 
-      class="transition-all duration-300 ease-in-out"
-      :class="navCollapsed ? 'md:ml-20' : 'md:ml-[280px]'"
+      class="transition-all duration-300 ease-in-out w-full md:ml-[280px]"
+      :class="{ 'md:ml-20': navCollapsed }"
     >
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
