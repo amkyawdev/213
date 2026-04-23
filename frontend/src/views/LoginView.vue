@@ -19,13 +19,13 @@
       <!-- Login Form -->
       <form @submit.prevent="handleLogin" class="space-y-6">
         <div>
-          <label class="block text-sm text-burme-light/60 mb-2">Username</label>
+          <label class="block text-sm text-burme-light/60 mb-2">Email</label>
           <input 
-            v-model="form.username"
-            type="text" 
+            v-model="form.email"
+            type="email" 
             required
             class="w-full px-4 py-3 rounded-xl"
-            placeholder="Enter your username"
+            placeholder="Enter your email"
           />
         </div>
         <div>
@@ -59,19 +59,6 @@
         </PremiumButton>
       </form>
 
-      <!-- Divider -->
-      <div class="flex items-center gap-4 my-8">
-        <div class="flex-1 h-px bg-burme-gold/20"></div>
-        <span class="text-burme-light/40 text-sm">or</span>
-        <div class="flex-1 h-px bg-burme-gold/20"></div>
-      </div>
-
-      <!-- Register Link -->
-      <p class="text-center text-burme-light/60">
-        Don't have an account?
-        <router-link to="/register" class="text-burme-gold hover:underline font-medium">Create one</router-link>
-      </p>
-
       <!-- Back to Home -->
       <div class="mt-6 text-center">
         <router-link to="/" class="text-burme-light/40 hover:text-burme-gold text-sm">
@@ -93,14 +80,14 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const form = ref({
-  username: '',
+  email: '',
   password: ''
 })
 
 const showPassword = ref(false)
 
 async function handleLogin() {
-  const success = await authStore.login(form.value.username, form.value.password)
+  const success = await authStore.login(form.value.email, form.value.password)
   if (success) {
     router.push('/chat')
   }
