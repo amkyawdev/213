@@ -1,20 +1,18 @@
 <template>
-  <nav class="fixed bottom-0 left-0 right-0 glass border-t border-t-burme-gold/10 px-2 py-2 bg-[#0A0A0A]/95 backdrop-blur-xl z-[9999] md:hidden" style="pointer-events: none;">
-    <div class="flex justify-around items-center" style="pointer-events: auto;">
-      <button
-        v-for="item in dockItems"
-        :key="item.path"
-        @click="navigate(item.path)"
-        class="dock-item flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-300"
-        :class="{ 'active': isActive(item.path) }"
-      >
-        <div class="dock-icon-wrapper relative">
-          <i :class="item.icon" class="text-xl transition-transform duration-300"></i>
-          <span v-if="item.badge" class="absolute -top-1 -right-1 w-2 h-2 bg-burme-gold rounded-full"></span>
-        </div>
-        <span class="text-xs mt-1 font-medium">{{ item.label }}</span>
-      </button>
-    </div>
+  <nav class="fixed bottom-0 left-0 right-0 flex justify-around items-center border-t border-t-burme-gold/10 px-2 py-2 bg-[#0A0A0A] md:hidden">
+    <button
+      v-for="item in dockItems"
+      :key="item.path"
+      @click="navigate(item.path)"
+      class="dock-item flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-300"
+      :class="{ 'active': isActive(item.path) }"
+    >
+      <div class="dock-icon-wrapper relative">
+        <i :class="item.icon" class="text-xl transition-transform duration-300"></i>
+        <span v-if="item.badge" class="absolute -top-1 -right-1 w-2 h-2 bg-burme-gold rounded-full"></span>
+      </div>
+      <span class="text-xs mt-1 font-medium">{{ item.label }}</span>
+    </button>
   </nav>
 </template>
 
