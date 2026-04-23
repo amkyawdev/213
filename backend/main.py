@@ -27,31 +27,13 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Provider configuration
+# Provider configuration - Cerebras Only
 AI_PROVIDERS = {
     "cerebras": {
         "url": "https://api.cerebras.cloud/v1/chat/completions",
         "api_key_env": "CEREBRAS_API_KEY",
         "model": "llama-3.3-70b",
         "priority": 1
-    },
-    "groq": {
-        "url": "https://api.groq.com/openai/v1/chat/completions",
-        "api_key_env": "GROQ_API_KEY",
-        "model": "llama-3.1-70b-versatile",
-        "priority": 2
-    },
-    "openrouter": {
-        "url": "https://openrouter.ai/api/v1/chat/completions",
-        "api_key_env": "OPENROUTER_API_KEY",
-        "model": "meta-llama/llama-3.1-70b-instruct",
-        "priority": 3
-    },
-    "nvidia": {
-        "url": "https://integrate.api.nvidia.com/v1/chat/completions",
-        "api_key_env": "NVIDIA_API_KEY",
-        "model": "meta/llama-3.1-70b-instruct",
-        "priority": 4
     }
 }
 
@@ -299,52 +281,30 @@ async def stream_openai_format(client: httpx.AsyncClient, provider: str, model: 
 
 
 class SmartProviderRouter:
-    """Intelligent provider routing with automatic failover"""
+    """Cerebras Provider Router - Single Provider"""
     
     def __init__(self):
-        self.available_providers = sorted(
-            [p for p in AI_PROVIDERS.keys() if os.getenv(AI_PROVIDERS[p]["api_key_env"])],
-            key=lambda x: AI_PROVIDERS[x]["priority"]
-        )
+        self.provider = "cerebras"
     
     async def get_response_stream(
         self, 
         messages: List[dict], 
         preferred_provider: Optional[str] = None
     ) -> AsyncGenerator[str, None]:
-        """Get streaming response with automatic failover"""
+        """Get streaming response from Cerebras"""
         
-        # Sort providers: preferred first, then by priority
-        providers = []
-        if preferred_provider and preferred_provider in self.available_providers:
-            providers.append(preferred_provider)
-        providers.extend([p for p in self.available_providers if p not in providers])
-        
-        last_error = None
-        
-        for provider in providers:
-            try:
-                config = AI_PROVIDERS[provider]
-                model = config["model"]
-                
-                async with httpx.AsyncClient(timeout=60.0) as client:
-                    async for chunk in stream_openai_format(client, provider, model, messages):
-                        yield chunk
-                return  # Success, exit
-                
-            except Exception as e:
-                last_error = e
-                error_type = type(e).__name__
-                log_activity("provider_error", {
-                    "provider": provider,
-                    "error": str(e),
-                    "error_type": error_type
-                })
-                continue
-        
-        # All providers failed
-        error_msg = f"All AI providers failed. Last error: {str(last_error)}"
-        yield f"data: {json.dumps({'error': error_msg, 'provider': 'none'})}\n\n"
+        try:
+            config = AI_PROVIDERS[self.provider]
+            model = config["model"]
+            
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                async for chunk in stream_openai_format(client, self.provider, model, messages):
+                    yield chunk
+            return  # Success, exit
+            
+        except Exception as e:
+            error_msg = f"Cerebras API error: {str(e)}"
+            yield f"data: {json.dumps({'error': error_msg, 'provider': 'cerebras'})}\n\n"
 
 
 router_instance = SmartProviderRouter()
