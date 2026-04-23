@@ -7,11 +7,11 @@
     <DesktopNav class="desktop-nav hidden md:block" @toggle="toggleNav" :collapsed="navCollapsed" />
     
     <!-- Mobile Bottom Dock (Hidden on Desktop) -->
-    <MobileDock class="mobile-dock fixed bottom-0 left-0 right-0 z-50 md:hidden" />
+    <MobileDock class="mobile-dock fixed bottom-0 left-0 right-0 z-[100] md:hidden" />
     
-    <!-- Main Content (Full width on mobile, sidebar margin on desktop) -->
+    <!-- Main Content (Full width on mobile with bottom dock padding, sidebar margin on desktop) -->
     <main 
-      class="transition-all duration-300 ease-in-out w-full md:ml-[280px]"
+      class="transition-all duration-300 ease-in-out w-full pb-20 md:pb-0 md:ml-[280px]"
       :class="{ 'md:ml-20': navCollapsed }"
     >
       <router-view v-slot="{ Component }">

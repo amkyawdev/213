@@ -1,5 +1,5 @@
 <template>
-  <nav class="glass border-t border-t-burme-gold/10 px-2 py-2">
+  <nav class="glass border-t border-t-burme-gold/10 px-2 py-2 bg-[#0A0A0A]/95 backdrop-blur-xl">
     <div class="flex justify-around items-center">
       <button
         v-for="item in dockItems"
