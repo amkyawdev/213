@@ -40,7 +40,7 @@
           size="lg" 
           class="w-full"
           icon="bi bi-envelope"
-          :loading="loading"
+          :loading="authStore.loading"
         >
           Send Reset Link
         </PremiumButton>
@@ -59,7 +59,10 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import PremiumButton from '@/components/PremiumButton.vue'
+
+const authStore = useAuthStore()
 
 const form = ref({
   email: ''
@@ -67,19 +70,18 @@ const form = ref({
 
 const error = ref('')
 const success = ref('')
-const loading = ref(false)
 
 async function handleReset() {
   error.value = ''
   success.value = ''
-  loading.value = true
 
-  // Simulate password reset
-  // In production, connect to Firebase Auth
-  setTimeout(() => {
+  const result = await authStore.resetPassword(form.value.email)
+  
+  if (result) {
     success.value = 'Password reset link sent to your email!'
-    loading.value = false
-  }, 1500)
+  } else {
+    error.value = authStore.error
+  }
 }
 </script>
 

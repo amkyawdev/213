@@ -1,8 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
-
-const API_URL = import.meta.env.VITE_API_URL || '/api'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('burme_token') || null)
@@ -13,73 +10,86 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value)
   const isAdmin = computed(() => user.value?.role === 'admin')
 
-  async function login(username, password) {
+  async function login(email, password) {
     loading.value = true
     error.value = null
     
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        username,
-        password
-      })
+      // Firebase Login
+      const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
+      const idToken = await userCredential.user.getIdToken()
       
-      token.value = response.data.access_token
-      localStorage.setItem('burme_token', token.value)
+      token.value = idToken
+      localStorage.setItem('burme_token', idToken)
       
-      // Fetch user profile
-      await fetchUser()
-      
-      return true
-    } catch (err) {
-      error.value = err.response?.data?.detail || 'Login failed'
-      return false
-    } finally {
-      loading.value = false
-    }
-  }
-
-  async function register(username, email, password) {
-    loading.value = true
-    error.value = null
-    
-    try {
-      const response = await axios.post(`${API_URL}/auth/register`, {
-        username,
-        email,
-        password
-      })
-      
-      token.value = response.data.access_token
-      localStorage.setItem('burme_token', token.value)
-      
-      // Fetch user profile
-      await fetchUser()
-      
-      return true
-    } catch (err) {
-      error.value = err.response?.data?.detail || 'Registration failed'
-      return false
-    } finally {
-      loading.value = false
-    }
-  }
-
-  async function fetchUser() {
-    if (!token.value) return
-    
-    try {
-      const response = await axios.get(`${API_URL}/user/me`, {
-        headers: { Authorization: `Bearer ${token.value}` }
-      })
-      
-      user.value = response.data
+      // Set user info from Firebase
+      user.value = {
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        emailVerified: userCredential.user.emailVerified
+      }
       localStorage.setItem('burme_user', JSON.stringify(user.value))
+      
+      return true
     } catch (err) {
-      logout()
+      error.value = getFirebaseErrorMessage(err.code)
+      return false
+    } finally {
+      loading.value = false
     }
   }
 
-  function logout() {
+  async function register(email, password) {
+    loading.value = true
+    error.value = null
+    
+    try {
+      // Firebase Register
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password)
+      const idToken = await userCredential.user.getIdToken()
+      
+      token.value = idToken
+      localStorage.setItem('burme_token', idToken)
+      
+      // Set user info from Firebase
+      user.value = {
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        emailVerified: userCredential.user.emailVerified
+      }
+      localStorage.setItem('burme_user', JSON.stringify(user.value))
+      
+      return true
+    } catch (err) {
+      error.value = getFirebaseErrorMessage(err.code)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function resetPassword(email) {
+    loading.value = true
+    error.value = null
+    
+    try {
+      await firebase.auth().sendPasswordResetEmail(email)
+      return true
+    } catch (err) {
+      error.value = getFirebaseErrorMessage(err.code)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function logout() {
+    try {
+      await firebase.auth().signOut()
+    } catch (err) {
+      console.error('Logout error:', err)
+    }
+    
     token.value = null
     user.value = null
     localStorage.removeItem('burme_token')
@@ -90,10 +100,42 @@ export const useAuthStore = defineStore('auth', () => {
     return token.value ? { Authorization: `Bearer ${token.value}` } : {}
   }
 
-  // Initialize - try to fetch user if we have a token
-  if (token.value) {
-    fetchUser()
+  function getFirebaseErrorMessage(code) {
+    const messages = {
+      'auth/email-already-in-use': 'Email already in use',
+      'auth/invalid-email': 'Invalid email address',
+      'auth/operation-not-allowed': 'Operation not allowed',
+      'auth/weak-password': 'Password is too weak',
+      'auth/user-disabled': 'User account disabled',
+      'auth/user-not-found': 'User not found',
+      'auth/wrong-password': 'Invalid password',
+      'auth/too-many-requests': 'Too many requests. Please try again later',
+      'auth/network-request-failed': 'Network error. Please check your connection',
+      'auth/invalid-credential': 'Invalid credentials'
+    }
+    return messages[code] || 'Authentication failed'
   }
+
+  // Initialize - check Firebase auth state
+  firebase.auth().onAuthStateChanged(async (firebaseUser) => {
+    if (firebaseUser) {
+      const idToken = await firebaseUser.getIdToken()
+      token.value = idToken
+      localStorage.setItem('burme_token', idToken)
+      
+      user.value = {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        emailVerified: firebaseUser.emailVerified
+      }
+      localStorage.setItem('burme_user', JSON.stringify(user.value))
+    } else {
+      token.value = null
+      user.value = null
+      localStorage.removeItem('burme_token')
+      localStorage.removeItem('burme_user')
+    }
+  })
 
   return {
     token,
@@ -104,8 +146,8 @@ export const useAuthStore = defineStore('auth', () => {
     isAdmin,
     login,
     register,
+    resetPassword,
     logout,
-    fetchUser,
     getAuthHeader
   }
 })
