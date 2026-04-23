@@ -9,9 +9,8 @@
     "frontend:preview": "cd frontend && npm run preview",
     "backend:dev": "cd backend && pip install -r requirements.txt && python main.py",
     "dev": "concurrently \"npm run frontend:dev\" \"npm run backend:dev\"",
-    "build": "npm run frontend:build",
-    "start": "cd frontend && npm run preview",
-    "deploy": "cd frontend && npm run build && npx wrangler deploy backend/index.js"
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd frontend && npm run preview"
   },
   "dependencies": {
     "vue": "^3.4.21",
