@@ -2,8 +2,18 @@
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "framework": "vite",
+  "experimentalServices": {
+    "frontend": {
+      "routePrefix": "/",
+      "framework": "vite"
+    },
+    "backend": {
+      "entrypoint": "backend",
+      "routePrefix": "/_/backend"
+    }
+  },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "backend/main.py" }
+    { "source": "/api/(.*)", "destination": "/_/backend/$1" }
   ],
   "headers": [
     {
@@ -22,6 +32,6 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "@burme-api-url"
+    "VITE_API_URL": "/api"
   }
 }
