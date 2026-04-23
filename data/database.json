@@ -1,0 +1,20 @@
+{
+  "app_state": "running",
+  "api_status": {
+    "cerebras": "online",
+    "groq": "online",
+    "openrouter": "online",
+    "nvidia": "offline"
+  },
+  "metrics": {
+    "total_requests": 0,
+    "active_users": 0,
+    "provider_stats": {
+      "cerebras": 0,
+      "groq": 0,
+      "openrouter": 0,
+      "nvidia": 0
+    }
+  },
+  "logs": []
+}

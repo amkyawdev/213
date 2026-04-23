@@ -1,0 +1,321 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Burme AI - Premium Styling */
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #D4AF37, #F1D592);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #F1D592, #D4AF37);
+}
+
+/* Base Styles */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(180deg, #0A0A0A 0%, #111111 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Golden Text Effects */
+.golden-text {
+  background: linear-gradient(135deg, #D4AF37 0%, #F1D592 50%, #D4AF37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+.golden-glow {
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5),
+               0 0 20px rgba(212, 175, 55, 0.3),
+               0 0 30px rgba(212, 175, 55, 0.2);
+}
+
+.heading-font {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+/* Gold Border */
+.gold-border {
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.gold-border-hover:hover {
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+/* Button Styles */
+.btn-gold {
+  background: linear-gradient(135deg, #D4AF37 0%, #F1D592 100%);
+  color: #0A0A0A;
+  font-weight: 600;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #F1D592 0%, #D4AF37 100%);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn-gold:active {
+  transform: translateY(0);
+}
+
+.btn-outline-gold {
+  background: transparent;
+  color: #D4AF37;
+  border: 2px solid #D4AF37;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-gold:hover {
+  background: rgba(212, 175, 55, 0.1);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Three.js Button Effects Container */
+.three-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Particle Canvas */
+#particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Input Styles */
+input, textarea {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Chat Bubble */
+.chat-bubble {
+  background: rgba(26, 26, 26, 0.9);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 16px;
+}
+
+.chat-bubble-user {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(241, 213, 146, 0.1) 100%);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.chat-bubble-ai {
+  background: rgba(10, 10, 10, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile Bottom Dock */
+@media (max-width: 767px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  
+  .mobile-dock {
+    display: flex !important;
+  }
+  
+  body {
+    padding-bottom: 80px;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-dock {
+    display: none !important;
+  }
+}
+
+/* Desktop Sidenav */
+.desktop-nav {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 280px;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+.desktop-nav.collapsed {
+  width: 80px;
+}
+
+.desktop-nav.hidden-mobile {
+  transform: translateX(-100%);
+}
+
+/* Loading Animation */
+.loading-dots::after {
+  content: '';
+  animation: loadingDots 1.5s infinite;
+}
+
+@keyframes loadingDots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Typing Effect */
+.typing-cursor::after {
+  content: '|';
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Markdown Styles */
+.markdown-content {
+  line-height: 1.7;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+  color: #D4AF37;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.markdown-content code {
+  background: rgba(26, 26, 26, 0.9);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+}
+
+.markdown-content pre {
+  background: rgba(26, 26, 26, 0.9);
+  padding: 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.markdown-content pre code {
+  background: none;
+  padding: 0;
+}
+
+.markdown-content blockquote {
+  border-left: 3px solid #D4AF37;
+  padding-left: 1em;
+  margin-left: 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* KaTeX Overrides */
+.katex {
+  font-size: 1.1em;
+}
+
+.katex-display {
+  margin: 1em 0;
+  padding: 1em;
+  background: rgba(26, 26, 26, 0.5);
+  border-radius: 8px;
+  overflow-x: auto;
+}
