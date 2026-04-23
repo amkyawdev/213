@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://bot.amkai.workers.dev'
+const API_TOKEN = '9f0dbff7f993a28e'
 
 export const useChatStore = defineStore('chat', () => {
   const messages = ref([])

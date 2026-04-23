@@ -27,7 +27,7 @@ function verifyJWT(token) {
   }
 }
 
-// Helper: Get AI Response
+// Helper: Get AI Response (Non-Streaming)
 async function getAIResponse(apiKey, provider, messages) {
   const config = AI_PROVIDERS[provider];
   const response = await fetch(config.url, {
@@ -39,7 +39,7 @@ async function getAIResponse(apiKey, provider, messages) {
     body: JSON.stringify({
       model: config.model,
       messages: messages,
-      stream: true
+      stream: false
     })
   });
 
@@ -160,6 +160,47 @@ export default {
             "Content-Type": "text/event-stream",
             ...corsHeaders
           }
+        });
+      }
+
+      // Chat: /api/chat (Non-Streaming)
+      if (path === "/api/chat" && request.method === "POST") {
+        const { message } = await request.json().catch(() => ({}));
+        
+        if (!message) {
+          return new Response(JSON.stringify({ error: "Message required" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
+        const apiKey = env.NVIDIA_API_KEY || env.CEREBRAS_API_KEY;
+        if (!apiKey) {
+          return new Response(JSON.stringify({ error: "API key not configured" }), {
+            status: 500,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
+        const provider = env.NVIDIA_API_KEY ? "nvidia" : "cerebras";
+        const response = await getAIResponse(apiKey, provider, [
+          { role: "system", content: "You are Burme AI, a helpful assistant." },
+          { role: "user", content: message }
+        ]);
+
+        if (!response.ok) {
+          const error = await response.text();
+          return new Response(JSON.stringify({ error }), {
+            status: response.status,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content || "No response";
+        
+        return new Response(JSON.stringify({ response: content, provider }), {
+          headers: { "Content-Type": "application/json", ...corsHeaders }
         });
       }
 
