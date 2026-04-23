@@ -65,8 +65,9 @@
             class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
             :class="message.role === 'user' ? 'bg-gradient-gold' : 'bg-burme-gray'"
           >
-            <i :class="message.role === 'user' ? 'bi bi-person' : 'bi bi-robot'" 
-               :class="message.role === 'user' ? 'text-burme-black' : 'text-burme-gold'"></i>
+            <i :class="message.role === 'user' 
+              ? 'bi bi-person text-burme-black' 
+              : 'bi bi-robot text-burme-gold'"></i>
           </div>
           
           <!-- Message Content -->
