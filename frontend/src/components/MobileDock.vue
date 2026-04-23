@@ -1,6 +1,6 @@
 <template>
-  <nav class="glass border-t border-t-burme-gold/10 px-2 py-2 bg-[#0A0A0A]/95 backdrop-blur-xl">
-    <div class="flex justify-around items-center">
+  <nav class="fixed bottom-0 left-0 right-0 glass border-t border-t-burme-gold/10 px-2 py-2 bg-[#0A0A0A]/95 backdrop-blur-xl z-[9999] md:hidden" style="pointer-events: none;">
+    <div class="flex justify-around items-center" style="pointer-events: auto;">
       <button
         v-for="item in dockItems"
         :key="item.path"

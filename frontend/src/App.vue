@@ -7,7 +7,7 @@
     <DesktopNav class="desktop-nav hidden md:block" @toggle="toggleNav" :collapsed="navCollapsed" />
     
     <!-- Mobile Bottom Dock (Hidden on Desktop) -->
-    <MobileDock class="mobile-dock fixed bottom-0 left-0 right-0 z-[9999] md:hidden" />
+    <MobileDock class="mobile-dock md:hidden" />
     
     <!-- Main Content (Full width on mobile with bottom dock padding, sidebar margin on desktop) -->
     <main 
