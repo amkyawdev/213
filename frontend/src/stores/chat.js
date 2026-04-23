@@ -1,13 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://bot.amkai.workers.dev'
 
 export const useChatStore = defineStore('chat', () => {
   const messages = ref([])
   const isLoading = ref(false)
-  const currentProvider = ref('cerebras')
+  const currentProvider = ref('nvidia')
   const sessionId = ref(null)
 
   function addMessage(role, content, provider = null) {
@@ -23,80 +22,32 @@ export const useChatStore = defineStore('chat', () => {
   async function sendMessage(message, authStore) {
     if (!message.trim()) return
     
-    // Add user message
     addMessage('user', message)
-    
     isLoading.value = true
-    currentProvider.value = 'cerebras'
+    currentProvider.value = 'nvidia'
     
     try {
-      const response = await fetch(`${API_URL}/chat/stream`, {
+      const response = await fetch(`${API_URL}/api/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...authStore.getAuthHeader()
         },
-        body: JSON.stringify({
-          message,
-          session_id: sessionId.value
-        })
+        body: JSON.stringify({ message })
       })
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.detail || errorData.error || 'Failed to send message')
+        throw new Error(errorData.error || 'Failed to send message')
       }
       
-      // Create AI message placeholder
-      const aiMessageId = Date.now() + 1
-      let aiContent = ''
+      const data = await response.json()
       
-      messages.value.push({
-        id: aiMessageId,
-        role: 'assistant',
-        content: '',
-        provider: currentProvider.value,
-        timestamp: new Date().toISOString()
-      })
-      
-      // Process stream
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-      
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        
-        const chunk = decoder.decode(value)
-        const lines = chunk.split('\n')
-        
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6))
-              
-              if (data.content) {
-                aiContent += data.content
-                messages.value.find(m => m.id === aiMessageId).content = aiContent
-              }
-              
-              if (data.provider) {
-                currentProvider.value = data.provider
-                messages.value.find(m => m.id === aiMessageId).provider = data.provider
-              }
-              
-              if (data.error) {
-                messages.value.find(m => m.id === aiMessageId).content = `Error: ${data.error}`
-              }
-            } catch (e) {
-              // Skip malformed JSON
-            }
-          }
-        }
-      }
-      
-    } catch (error) {
-      addMessage('assistant', `Error: ${error.message}. Please try again.`)
+      addMessage('assistant', data.response, 'nvidia')
+      return true
+    } catch (err) {
+      addMessage('assistant', err.message, 'error')
+      return false
     } finally {
       isLoading.value = false
     }
@@ -106,10 +57,6 @@ export const useChatStore = defineStore('chat', () => {
     messages.value = []
   }
 
-  function loadHistory(messages) {
-    messages.value = messages
-  }
-
   return {
     messages,
     isLoading,
@@ -117,7 +64,6 @@ export const useChatStore = defineStore('chat', () => {
     sessionId,
     addMessage,
     sendMessage,
-    clearMessages,
-    loadHistory
+    clearMessages
   }
 })
