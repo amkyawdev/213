@@ -6,10 +6,6 @@ const AI_PROVIDERS = {
   nvidia: {
     url: "https://integrate.api.nvidia.ai/v1/chat/completions",
     model: "nvidia/llama-3.1-nemorus-70b-instruct"
-  },
-  cerebras: {
-    url: "https://api.cerebras.cloud/v1/chat/completions",
-    model: "llama-3.3-70b"
   }
 };
 
@@ -33,11 +29,18 @@ async function getAIResponse(apiKey, provider, messages) {
 
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(error);
+    let errData;
+    try { errData = JSON.parse(error); } catch { errData = { error: error }; }
+    throw new Error(errData.detail || errData.message || error);
   }
 
   const data = await response.json();
-  return data.choices?.[0]?.message?.content || "No response";
+  
+  // Check for different response formats
+  if (data.reply) return data.reply;
+  if (data.choices?.[0]?.message?.content) return data.choices[0].message.content;
+  if (data.content) return data.content;
+  return JSON.stringify(data);
 }
 
 export default {
