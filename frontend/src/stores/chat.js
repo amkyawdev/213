@@ -41,7 +41,7 @@ export const useChatStore = defineStore('chat', () => {
       
       const data = await response.json()
       
-      addMessage('assistant', data.response, 'nvidia')
+      addMessage('assistant', data.reply || data.response, 'nvidia')
       return true
     } catch (err) {
       addMessage('assistant', err.message, 'error')
