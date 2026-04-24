@@ -4,13 +4,9 @@
   "private": true,
   "description": "Premium AI Web Application - Burme AI",
   "scripts": {
-    "frontend:dev": "cd frontend && npm run dev",
-    "frontend:build": "cd frontend && npm install && npm run build",
-    "frontend:preview": "cd frontend && npm run preview",
-    "backend:dev": "cd backend && pip install -r requirements.txt && python main.py",
-    "dev": "concurrently \"npm run frontend:dev\" \"npm run backend:dev\"",
+    "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm install && npm run build",
-    "start": "cd frontend && npm run preview"
+    "preview": "cd frontend && npm run preview"
   },
   "dependencies": {
     "vue": "^3.4.21",
