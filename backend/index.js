@@ -1,116 +1,90 @@
 /**
- * Burme AI - Cloudflare Worker API (v2)
+ * Burme AI - Cloudflare Worker API
  */
 
-const AI_PROVIDERS = {
-  nvidia: {
-    url: "https://integrate.api.nvidia.ai/v1/chat/completions",
-    model: "nvidia/llama-3.1-nemorus-70b-instruct"
-  }
-};
-
-// Helper: Get AI Response
-async function getAIResponse(apiKey, provider, messages) {
-  const config = AI_PROVIDERS[provider];
-  
-  const response = await fetch(config.url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-      model: config.model,
-      messages: messages,
-      stream: false,
-      max_tokens: 2048
-    })
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    let errData;
-    try { errData = JSON.parse(error); } catch { errData = { error: error }; }
-    throw new Error(errData.detail || errData.message || error);
-  }
-
-  const data = await response.json();
-  
-  // Check for different response formats
-  if (data.reply) return data.reply;
-  if (data.choices?.[0]?.message?.content) return data.choices[0].message.content;
-  if (data.content) return data.content;
-  return JSON.stringify(data);
-}
-
 export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-    const path = url.pathname;
-
-    // CORS headers
+  async fetch(request, env) {
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     };
 
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders });
     }
 
-    try {
-      // Chat: /v1/chat
-      if (path === "/v1/chat" && request.method === "POST") {
-        const { prompt } = await request.json().catch(() => ({}));
-        
-        if (!prompt) {
-          return new Response(JSON.stringify({ error: "Message required" }), {
-            status: 400,
-            headers: { "Content-Type": "application/json", ...corsHeaders }
-          });
-        }
+    const url = new URL(request.url);
 
-        const apiKey = env.NVIDIA_API_KEY;
-        if (!apiKey) {
-          return new Response(JSON.stringify({ error: "API key not configured" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json", ...corsHeaders }
-          });
-        }
-
-        const response = await getAIResponse(apiKey, "nvidia", [
-          { role: "system", content: "You are Burme AI, a helpful AI assistant. Respond in the same language as the user." },
-          { role: "user", content: prompt }
-        ]);
-        
-        return new Response(JSON.stringify({ 
-          response: response,
-          provider: "nvidia"
-        }), {
-          headers: { "Content-Type": "application/json", ...corsHeaders }
-        });
-      }
-
-      // Health: /health
-      if (path === "/health") {
-        return new Response(JSON.stringify({ 
-          status: "ok", 
-          provider: env.NVIDIA_API_KEY ? "nvidia" : "not configured"
-        }), {
-          headers: { "Content-Type": "application/json", ...corsHeaders }
-        });
-      }
-
-      return new Response(JSON.stringify({ error: "Not found", path }), {
+    if (url.pathname !== "/v1/chat") {
+      return new Response(JSON.stringify({ error: "Not Found" }), {
         status: 404,
-        headers: { "Content-Type": "application/json", ...corsHeaders }
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    if (request.method !== "POST") {
+      return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
+        status: 405,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid or empty JSON body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    const prompt = body?.prompt;
+
+    if (!prompt || typeof prompt !== "string") {
+      return new Response(JSON.stringify({ error: "Missing or invalid prompt" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    try {
+      const aiRes = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${env.NVIDIA_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "nvidia/llama-3.1-nemo-8b-instruct",
+          messages: [
+            { role: "user", content: prompt }
+          ],
+          max_tokens: 500,
+          temperature: 0.7
+        }),
       });
 
-    } catch (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
+      const data = await aiRes.json();
+
+      const result = data?.choices?.[0]?.message?.content || "No response";
+
+      return new Response(JSON.stringify({
+        success: true,
+        reply: result,
+        raw: data
+      }), {
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+
+    } catch (err) {
+      return new Response(JSON.stringify({
+        error: "AI request failed",
+        detail: err.message
+      }), {
         status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders }
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
   }
