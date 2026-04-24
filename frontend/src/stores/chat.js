@@ -1,14 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://bot.amkai.workers.dev'
-const API_TOKEN = '9f0dbff7f993a28e'
+const API_URL = import.meta.env.VITE_API_URL || 'https://ai.amkyawdev.workers.dev'
 
 export const useChatStore = defineStore('chat', () => {
   const messages = ref([])
   const isLoading = ref(false)
   const currentProvider = ref('nvidia')
-  const sessionId = ref(null)
 
   function addMessage(role, content, provider = null) {
     messages.value.push({
@@ -25,7 +23,6 @@ export const useChatStore = defineStore('chat', () => {
     
     addMessage('user', message)
     isLoading.value = true
-    currentProvider.value = 'nvidia'
     
     try {
       const response = await fetch(`${API_URL}/v1/chat`, {
@@ -34,7 +31,7 @@ export const useChatStore = defineStore('chat', () => {
           'Content-Type': 'application/json',
           ...authStore.getAuthHeader()
         },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ prompt: message })
       })
       
       if (!response.ok) {
@@ -62,7 +59,6 @@ export const useChatStore = defineStore('chat', () => {
     messages,
     isLoading,
     currentProvider,
-    sessionId,
     addMessage,
     sendMessage,
     clearMessages

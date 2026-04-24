@@ -59,9 +59,9 @@ export default {
     try {
       // Chat: /v1/chat
       if (path === "/v1/chat" && request.method === "POST") {
-        const { message } = await request.json().catch(() => ({}));
+        const { prompt } = await request.json().catch(() => ({}));
         
-        if (!message) {
+        if (!prompt) {
           return new Response(JSON.stringify({ error: "Message required" }), {
             status: 400,
             headers: { "Content-Type": "application/json", ...corsHeaders }
@@ -78,7 +78,7 @@ export default {
 
         const response = await getAIResponse(apiKey, "nvidia", [
           { role: "system", content: "You are Burme AI, a helpful AI assistant. Respond in the same language as the user." },
-          { role: "user", content: message }
+          { role: "user", content: prompt }
         ]);
         
         return new Response(JSON.stringify({ 
