@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://ai.amkyawdev.workers.dev'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export const useChatStore = defineStore('chat', () => {
   const messages = ref([])
@@ -18,7 +18,7 @@ export const useChatStore = defineStore('chat', () => {
     })
   }
 
-  async function sendMessage(message, authStore) {
+  async function sendMessage(message) {
     if (!message.trim()) return
     
     addMessage('user', message)
@@ -28,8 +28,7 @@ export const useChatStore = defineStore('chat', () => {
       const response = await fetch(`${API_URL}/v1/chat`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          ...authStore.getAuthHeader()
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ prompt: message })
       })

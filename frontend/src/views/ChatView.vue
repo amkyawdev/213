@@ -142,13 +142,11 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
-import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
 import { marked } from 'marked'
 import katex from 'katex'
 import PremiumButton from '@/components/PremiumButton.vue'
 
-const authStore = useAuthStore()
 const chatStore = useChatStore()
 const inputRef = ref(null)
 const inputMessage = ref('')
@@ -213,7 +211,7 @@ async function sendMessage() {
   inputMessage.value = ''
   clearInput()
   
-  await chatStore.sendMessage(message, authStore)
+  await chatStore.sendMessage(message)
   
   // Scroll to bottom
   nextTick(() => {
