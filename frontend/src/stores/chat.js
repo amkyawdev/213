@@ -6,7 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 export const useChatStore = defineStore('chat', () => {
   const messages = ref([])
   const isLoading = ref(false)
-  const currentProvider = ref('nvidia')
+  const currentProvider = ref('groq')
 
   function addMessage(role, content, provider = null) {
     messages.value.push({
@@ -40,7 +40,7 @@ export const useChatStore = defineStore('chat', () => {
       
       const data = await response.json()
       
-      addMessage('assistant', data.reply || data.response, 'nvidia')
+      addMessage('assistant', data.reply || data.response, 'groq')
       return true
     } catch (err) {
       addMessage('assistant', err.message, 'error')

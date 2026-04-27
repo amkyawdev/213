@@ -24,35 +24,35 @@ class ChatRequest(BaseModel):
     max_tokens: Optional[int] = 500
     temperature: Optional[float] = 0.7
 
-# NVIDIA API
-NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
-NVIDIA_MODEL = "nvidia/llama-3.1-nemo-8b-instruct"
+# Groq API
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL = "llama-3.3-70b-versatile"
 
-async def call_nvidia(prompt: str, max_tokens: int = 500, temperature: float = 0.7):
+async def call_groq(prompt: str, max_tokens: int = 500, temperature: float = 0.7):
     import httpx
-    api_key = os.environ.get("NVIDIA_API_KEY")
+    api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
-        raise HTTPException(status_code=500, detail="NVIDIA_API_KEY not configured")
-    
+        raise HTTPException(status_code=500, detail="GROQ_API_KEY not configured")
+
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            NVIDIA_API_URL,
+            GROQ_API_URL,
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json"
             },
             json={
-                "model": NVIDIA_MODEL,
+                "model": GROQ_MODEL,
                 "messages": [{"role": "user", "content": prompt}],
                 "max_tokens": max_tokens,
                 "temperature": temperature
             },
             timeout=30.0
         )
-    
+
     if response.status_code != 200:
         raise HTTPException(status_code=500, detail=response.text)
-    
+
     data = response.json()
     return data["choices"][0]["message"]["content"]
 
@@ -67,7 +67,7 @@ async def health():
 @app.post("/v1/chat")
 async def chat(request: ChatRequest):
     try:
-        reply = await call_nvidia(request.prompt, request.max_tokens, request.temperature)
+        reply = await call_groq(request.prompt, request.max_tokens, request.temperature)
         return {"success": True, "reply": reply}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
