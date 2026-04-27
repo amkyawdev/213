@@ -58,13 +58,13 @@ async def call_groq(prompt: str, max_tokens: int = 500, temperature: float = 0.7
 
 @app.get("/")
 async def root():
-    return {"status": "OK", "message": "Burme AI API", "endpoint": "/v1/chat"}
+    return {"status": "OK", "message": "Burme AI API", "endpoint": "/api/chat"}
 
 @app.get("/health")
 async def health():
     return {"status": "healthy"}
 
-@app.post("/v1/chat")
+@app.post("/api/chat")
 async def chat(request: ChatRequest):
     try:
         reply = await call_groq(request.prompt, request.max_tokens, request.temperature)

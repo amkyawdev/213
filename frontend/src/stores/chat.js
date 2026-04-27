@@ -25,7 +25,7 @@ export const useChatStore = defineStore('chat', () => {
     isLoading.value = true
     
     try {
-      const response = await fetch(`${API_URL}/v1/chat`, {
+      const response = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
