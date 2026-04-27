@@ -26,7 +26,7 @@ class ChatRequest(BaseModel):
 
 # Groq API
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = "meta-llama/llama-3.3-70b-versatile"
 
 async def call_groq(prompt: str, max_tokens: int = 500, temperature: float = 0.7):
     import httpx
